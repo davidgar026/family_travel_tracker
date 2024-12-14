@@ -24,6 +24,7 @@ let users = [
   { id: 2, name: "Jack", color: "powderblue" },
 ];
 
+
 async function checkVisisted() {
   const result = await db.query(`SELECT country_code FROM visited_countries WHERE user_id = ${currentUserId}`);
   let countries = [];
@@ -33,13 +34,9 @@ async function checkVisisted() {
   return countries;
 }
 
-async function addNewUserToObj() {
-
-
-}
-
 
 app.get("/", async (req, res) => {
+
   
   const countries = await checkVisisted();
 
@@ -47,7 +44,7 @@ app.get("/", async (req, res) => {
     countries: countries,
     total: countries.length,
     users: users,
-    color: "teal",
+    color: users[currentUserId - 1].color,
   });
 });
 
@@ -77,18 +74,20 @@ app.post("/add", async (req, res) => {
 });
 
 app.post("/user", async (req, res) => {
+
+  console.log("users = ", users[currentUserId - 1].color)
   
   if (req.body.user) {
-    console.log("currentUserId = ", currentUserId);
     currentUserId = req.body.user;
+    console.log("currentUserId = ", currentUserId); //COMMENT
     const countries = await checkVisisted();
-
     res.render("index.ejs", {
       countries: countries,
       total: countries.length,
       users: users,
-      color: "teal",
+      color: users[currentUserId - 1].color,
     });
+
   } else if (req.body.add) {
     res.render("new.ejs")
   }
